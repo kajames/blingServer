@@ -49,6 +49,54 @@ def doBling(data):
             strip.show()
             time.sleep(wait_ms/1000.0)
 
+    def theaterChase(strip, color, wait_ms=50, iterations=10):
+        """Movie theater light style chaser animation."""
+        for j in range(iterations):
+            for q in range(3):
+                for i in range(0, strip.numPixels(), 3):
+                    strip.setPixelColor(i+q, color)
+                strip.show()
+                time.sleep(wait_ms/1000.0)
+                for i in range(0, strip.numPixels(), 3):
+                    strip.setPixelColor(i+q, 0)
+
+    def wheel(pos):
+        """Generate rainbow colors across 0-255 positions."""
+        if pos < 85:
+            return Color(pos * 3, 255 - pos * 3, 0)
+        elif pos < 170:
+            pos -= 85
+            return Color(255 - pos * 3, 0, pos * 3)
+        else:
+            pos -= 170
+            return Color(0, pos * 3, 255 - pos * 3)
+
+    def rainbow(strip, wait_ms=20, iterations=1):
+        """Draw rainbow that fades across all pixels at once."""
+        for j in range(256*iterations):
+            for i in range(strip.numPixels()):
+                strip.setPixelColor(i, wheel((i+j) & 255))
+            strip.show()
+            time.sleep(wait_ms/1000.0)
+
+    def rainbowCycle(strip, wait_ms=20, iterations=5):
+        """Draw rainbow that uniformly distributes itself across all pixels."""
+        for j in range(256*iterations):
+            for i in range(strip.numPixels()):
+                strip.setPixelColor(i, wheel((int(i * 256 / strip.numPixels()) + j) & 255))
+            strip.show()
+            time.sleep(wait_ms/1000.0)
+
+    def theaterChaseRainbow(strip, wait_ms=50):
+        """Rainbow movie theater light style chaser animation."""
+        for j in range(256):
+            for q in range(3):
+                for i in range(0, strip.numPixels(), 3):
+                    strip.setPixelColor(i+q, wheel((i+j) % 255))
+                strip.show()
+                time.sleep(wait_ms/1000.0)
+                for i in range(0, strip.numPixels(), 3):
+                    strip.setPixelColor(i+q, 0)
     signal.signal(signal.SIGTERM, sig_term_handler)
 
     process = multiprocessing.current_process()
@@ -59,12 +107,27 @@ def doBling(data):
     logger.debug("Received data %r", data)
 
     # Real work goes here
-    if data[1] == 'red':
-        colorWipe(strip, Color(255, 0, 0))  # Red wipe
-    elif data[1] == 'green':
-        colorWipe(strip, Color(0, 255, 0))  # Green wipe
-    elif data[1] == 'blue':
-        colorWipe(strip, Color(0, 0, 255))  # Blue wipe
+    command=data[0]
+    colorString=data[1]
+
+    if colorString == "red":
+        color=Color(255, 0, 0)
+    elif colorString == "green":
+        color=Color(0, 255, 0)
+    elif colorString == "blue":
+        color=Color(0, 0, 255)
+    else:
+        color=Color(32,32,32)
+
+    if command == "colorWipe":
+        colorWipe(strip, color)  # Red wipe
+    elif command == "theaterChase":
+        theaterChase(strip, color)
+    elif command == "rainbow":
+        rainbow(strip)
+    elif command == "theaterChaseRainbow":
+        theaterChaseRainbow(strip)
+
     clear()
 
     logger.debug("Terminating")
