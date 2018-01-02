@@ -59,9 +59,12 @@ def doBling(data):
     logger.debug("Received data %r", data)
 
     # Real work goes here
-    colorWipe(strip, Color(255, 0, 0))  # Red wipe
-    colorWipe(strip, Color(0, 255, 0))  # Blue wipe
-    colorWipe(strip, Color(0, 0, 255))  # Green wipe
+    if data[1] == 'red':
+        colorWipe(strip, Color(255, 0, 0))  # Red wipe
+    elif data[1] == 'green':
+        colorWipe(strip, Color(0, 255, 0))  # Green wipe
+    elif data[1] == 'blue':
+        colorWipe(strip, Color(0, 0, 255))  # Blue wipe
     clear()
 
     logger.debug("Terminating")
