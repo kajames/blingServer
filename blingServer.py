@@ -37,10 +37,32 @@ def doBling(data):
             strip.setPixelColor(i, 0)
         strip.show()
 
+
+    def solid(strip, color, wait_ms, iterations, LED_BRIGHTNESS):
+        strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
+        strip.begin()
+        for i in range(strip.numPixels()):
+            strip.setPixelColor(i, color)
+        strip.show()
+        time.sleep(wait_ms/1000.0)
+    
+    def blink(strip ,color, wait_ms, iterations, LED_BRIGHTNESS):
+        strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
+        strip.begin() 
+	for j in range(iterations):
+            for i in range(strip.numPixels()):
+                strip.setPixelColor(i, color)
+            strip.show()
+            time.sleep(wait_ms/1000.0)
+            for i in range(strip.numPixels()):
+                strip.setPixelColor(i, 0)  
+            strip.show()
+            time.sleep(wait_ms/1000.0) 
+     
     def sig_term_handler(signal,frame):
         logger.debug("Received SIGTERM")
         clear()
-        sys.exit(0)
+        sys.exit(0) 
 
     def colorWipe(strip, color, iterations, wait_ms, LED_BRIGHTNESS):
         strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
@@ -139,6 +161,10 @@ def doBling(data):
 
     if command == "colorWipe":
         colorWipe(strip, color, iterations, wait_ms, LED_BRIGHTNESS)  # Red wipe
+    elif command == "solid":
+        solid(strip, color, wait_ms, iterations, LED_BRIGHTNESS) 
+    elif command == "blink":
+        blink(strip, color, wait_ms, iterations, LED_BRIGHTNESS) 
     elif command == "theaterChase":
         theaterChase(strip, color, iterations, wait_ms, LED_BRIGHTNESS)
     elif command == "rainbow":
@@ -166,10 +192,10 @@ def handleBlingRequest(table, key, value, isNew):
     logger = logging.getLogger("handleBlingRequest")
 
     command = value
-    color = sd.getString("color")
-    iterations = sd.getNumber('repeat')
-    wait_ms = sd.getNumber('wait_ms')    
-    LED_BRIGHTNESS = sd.getNumber('LED_BRIGHTNESS')     
+    color = sd.getString("color", "")
+    iterations = sd.getNumber('repeat', int)
+    wait_ms = sd.getNumber('wait_ms', int)    
+    LED_BRIGHTNESS = sd.getNumber('LED_BRIGHTNESS', int)     
 
     data = (command, color, iterations, wait_ms, LED_BRIGHTNESS)
 
