@@ -192,10 +192,10 @@ def handleBlingRequest(table, key, value, isNew):
     logger = logging.getLogger("handleBlingRequest")
 
     command = value
-    color = sd.getString("color")
-    iterations = sd.getNumber('repeat')
-    wait_ms = sd.getNumber('wait_ms')    
-    LED_BRIGHTNESS = sd.getNumber('LED_BRIGHTNESS')     
+    color = sd.getString("color", "")
+    iterations = sd.getNumber('repeat', int)
+    wait_ms = sd.getNumber('wait_ms', int)    
+    LED_BRIGHTNESS = sd.getNumber('LED_BRIGHTNESS', int)     
 
     data = (command, color, iterations, wait_ms, LED_BRIGHTNESS)
 
