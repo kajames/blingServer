@@ -58,7 +58,7 @@ def doBling(data):
         strip.show()
 
 
-    def solid(strip, color, wait, iterations, brightness):
+    def solid(strip, color, wait_ms, iterations, brightness):
         """Generate a solid bar of color"""
 
         strip.setBrightness(brightness)
@@ -67,7 +67,12 @@ def doBling(data):
             strip.setPixelColor(i, color)
 
         strip.show()
-        time.sleep(wait)
+        if wait_ms == 0:
+            while True:
+                time.sleep(1)
+
+        time.sleep(wait_ms/1000)
+
         clear()
     
     def blink(strip ,color, wait_ms, iterations, brightness):
