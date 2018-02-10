@@ -14,7 +14,7 @@ logger = logging.getLogger("main")
 process = None
 
 # LED strip configuration:
-LED_COUNT      = 120     # Number of LED pixels.
+LED_COUNT      = 128     # Number of LED pixels.
 LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
 #LED_PIN       = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
@@ -51,21 +51,28 @@ def doBling(data):
             return Color(0, pos * 3, 255 - pos * 3)
 
     def clear():
+        """Clear the strip"""
+
         for i in range(strip.numPixels()):
             strip.setPixelColor(i, 0)
         strip.show()
 
 
-    def solid(strip, color, wait_ms, iterations, brightness):
+    def solid(strip, color, wait, iterations, brightness):
+        """Generate a solid bar of color"""
+
         strip.setBrightness(brightness)
 
         for i in range(strip.numPixels()):
             strip.setPixelColor(i, color)
 
         strip.show()
-        time.sleep(wait_ms/1000.0)
+        time.sleep(wait)
+        clear()
     
     def blink(strip ,color, wait_ms, iterations, brightness):
+        """Blink all the LEDs on and off at the same time"""
+
         strip.setBrightness(brightness)
 
 	for j in range(iterations):
@@ -86,10 +93,13 @@ def doBling(data):
 
         strip.setBrightness(brightness)
 
-        for i in range(strip.numPixels()):
-            strip.setPixelColor(i, color)
-            strip.show()
-            time.sleep(wait_ms/1000.0)
+	for j in range(iterations):
+            for i in range(strip.numPixels()):
+                strip.setPixelColor(i, color)
+                strip.show()
+                time.sleep(wait_ms/1000.0)
+
+            clear()
 
     def theaterChase(strip, color, iterations, wait_ms, brightness):
 	"""Movie theater light style chaser animation."""
@@ -106,6 +116,7 @@ def doBling(data):
 
                 for i in range(0, strip.numPixels(), 3):
                     strip.setPixelColor(i+q, 0)
+        clear()
 
     def rainbow(strip, wait_ms, iterations, brightness):
 	"""Draw rainbow that fades across all pixels at once."""
@@ -119,6 +130,8 @@ def doBling(data):
             strip.show()
             time.sleep(wait_ms/1000.0)
 
+        clear()
+
     def rainbowCycle(strip, wait_ms, iterations, brightness):
 	""" Draw rainbow that uniformly distributes itself across all pixels."""
 
@@ -130,6 +143,8 @@ def doBling(data):
 
             strip.show()
             time.sleep(wait_ms/1000.0)
+
+        clear()
 
     def theaterChaseRainbow(strip, iterations, wait_ms, brightness):
 	"""Rainbow movie theater light style chaser animation."""
@@ -146,6 +161,7 @@ def doBling(data):
 
                 for i in range(0, strip.numPixels(), 3):
                     strip.setPixelColor(i+q, 0)
+        clear()
 
     # ------------------------------------------------------------------------#
 
@@ -195,7 +211,7 @@ def doBling(data):
     elif command == "clear":
 	clear()    
     
-    clear()
+#   clear()
 
     logger.debug("Terminating")
 
@@ -229,12 +245,12 @@ def handleBlingRequest(table, key, value, isNew):
         process.terminate()
         process.join()
 
-    if command == "clear":
-        logger.debug("got clear command")
-    else:
-        process = multiprocessing.Process(target=doBling, args=(data,))
-        process.daemon = True
-        process.start()
+#   if command == "clear":
+#       logger.debug("got clear command")
+#   else:
+    process = multiprocessing.Process(target=doBling, args=(data,))
+    process.daemon = True
+    process.start()
         
     logger.debug("ending %r %r" % (command, color))
 
