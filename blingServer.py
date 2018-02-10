@@ -15,7 +15,11 @@ parser.add_argument("-s", "--server", help="The networktables server address",
                                       default='127.0.0.1')
 args = parser.parse_args()
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(\
+    format='%(asctime)s.%(msecs)03d %(levelname)s:%(message)s',\
+    datefmt='%H:%M:%S',\
+    level=logging.DEBUG)
+
 logger = logging.getLogger("main")
 
 process = None
