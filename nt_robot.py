@@ -26,7 +26,7 @@ NetworkTables.initialize()
 sd = NetworkTables.getTable("blingTable")
 
 while True:
-    parms = input("Enter command color: ")
+    parms = input("Enter color,repeat,wait,brightness,command: ")
     #command=parms.split()[0]
    # color=parms.split()[1]
    # repeat=parms.split()[2]\
