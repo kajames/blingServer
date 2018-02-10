@@ -4,9 +4,16 @@ import multiprocessing
 import sys
 import time
 import logging
+import argparse
 
 from networktables import NetworkTables
 from neopixel import *
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("-s", "--server", help="The networktables server address",
+                                      default='127.0.0.1')
+args = parser.parse_args()
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("main")
@@ -265,7 +272,8 @@ def handleBlingRequest(table, key, value, isNew):
 if __name__ == "__main__":
 
     #ip = "roboRIO-2706-FRC.local"
-    ip = '127.0.0.1'
+    ip = args.server
+    logger.info("ip = %s" % ip)
     NetworkTables.initialize(server=ip)
     NetworkTables.addConnectionListener(connectionListener, immediateNotify=True)
     sd = NetworkTables.getTable("blingTable")
